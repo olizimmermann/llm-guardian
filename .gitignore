@@ -1,0 +1,9 @@
+.DS_Store
+.pyc
+venv
+.venv
+.env
+.ini
+# too large files
+*.npy
+*.joblib 
