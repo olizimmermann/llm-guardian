@@ -11,6 +11,18 @@ class PromptClassifier:
         self.classifier = None
         self.load_models()
     
+    def clean_up_text(self, text):
+        text = str(text)
+        text = text.replace('\n', ' ')
+        text = text.replace('\t', ' ')
+        text = text.replace('\r', ' ')
+        # remove whitespaces
+        text = text.strip()
+        # remove multiple whitespaces
+        text = ' '.join(text.split())
+        text = text.lower()
+        return text
+    
     def load_models(self):
         """Load BERT and trained classifier models"""
         try:
@@ -19,7 +31,7 @@ class PromptClassifier:
             self.bert_model = AutoModel.from_pretrained('bert-base-multilingual-uncased')
             
             # Load trained classifier
-            self.classifier = joblib.load('data/models/random_forest_model_bert_smote_n500_class_weight_balanced.joblib')
+            self.classifier = joblib.load('data/models/random_forest_model_bert_smote_1000n.joblib')
             
             print("Models loaded successfully")
         except Exception as e:
@@ -46,6 +58,7 @@ class PromptClassifier:
     def classify(self, prompt: str) -> Dict[str, Any]:
         """Classify prompt as malicious or benign"""
         try:
+            prompt = self.clean_up_text(prompt)
             # Generate embeddings
             embeddings = self.generate_embeddings(prompt)
             
